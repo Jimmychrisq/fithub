@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitHub - Smart Fitness Club Management System</title>
+    <title data-i18n="page_title">FitHub - Smart Fitness Club Management System</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Custom Styles -->
@@ -18,32 +18,46 @@
     <!-- Top Navigation -->
     <header class="bg-indigo-600 text-white shadow-md relative z-20">
         <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2">🏋️ FitHub Smart System</h1>
+            <h1 class="text-xl font-bold tracking-wider flex items-center gap-2">
+                <span>🏋️</span>
+                <span data-i18n="brand_name">FitHub Smart System</span>
+            </h1>
             
-            <!-- Auth Nav Controls -->
-            <div id="nav-auth-controls" class="flex items-center gap-3">
-                <!-- Unauthenticated State -->
-                <div id="unauth-buttons" class="flex gap-2">
-                    <button onclick="openModal('signin-modal')" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition shadow-sm border border-indigo-500">Sign In</button>
-                    <button onclick="openModal('join-modal')" class="bg-emerald-500 hover:bg-emerald-400 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition shadow-sm">Join Us</button>
-                </div>
+            <!-- Right Controls: Language Switcher + Auth Nav Controls -->
+            <div class="flex items-center gap-3">
+                <!-- Language Switcher -->
+                <button id="lang-toggle-btn" onclick="toggleLanguage()" class="bg-indigo-500/40 hover:bg-indigo-500 text-white text-xs px-2.5 py-1.5 rounded-lg font-medium transition border border-indigo-400/50 flex items-center gap-1">
+                    <span>🌐</span>
+                    <span id="lang-label">中文</span>
+                </button>
 
-                <!-- Authenticated State -->
-                <div id="auth-dropdown-container" class="relative hidden">
-                    <button onclick="toggleUserDropdown()" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-2 shadow-sm border border-indigo-500">
-                        <span id="nav-username">Hi, Member</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    
-                    <!-- Dropdown Menu -->
-                    <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-100 py-1 text-slate-700 text-xs z-30">
-                        <button onclick="openProfileModal()" class="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-2">
-                            <span>👤</span> View Profile & Announcements
+                <!-- Auth Nav Controls -->
+                <div id="nav-auth-controls" class="flex items-center gap-3">
+                    <!-- Unauthenticated State -->
+                    <div id="unauth-buttons" class="flex gap-2">
+                        <button onclick="openModal('signin-modal')" data-i18n="btn_signin" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition shadow-sm border border-indigo-500">Sign In</button>
+                        <button onclick="openModal('join-modal')" data-i18n="btn_join" class="bg-emerald-500 hover:bg-emerald-400 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition shadow-sm">Join Us</button>
+                    </div>
+
+                    <!-- Authenticated State -->
+                    <div id="auth-dropdown-container" class="relative hidden">
+                        <button onclick="toggleUserDropdown()" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-2 shadow-sm border border-indigo-500">
+                            <span id="nav-username" data-i18n="nav_greeting">Hi, Member</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
-                        <hr class="my-1 border-slate-100">
-                        <button onclick="handleSignOut()" class="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 flex items-center gap-2">
-                            <span>🚪</span> Sign Out
-                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-slate-100 py-1 text-slate-700 text-xs z-30">
+                            <button onclick="openProfileModal()" class="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-2">
+                                <span>👤</span>
+                                <span data-i18n="menu_profile">View Profile & Announcements</span>
+                            </button>
+                            <hr class="my-1 border-slate-100">
+                            <button onclick="handleSignOut()" class="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 flex items-center gap-2">
+                                <span>🚪</span>
+                                <span data-i18n="menu_signout">Sign Out</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -55,34 +69,37 @@
 
         <!-- Membership Management & Comparison Table Module -->
         <section id="membership-section" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h2 class="text-lg font-semibold mb-4 text-indigo-600 flex items-center gap-2">💳 1. Membership Plans & Digital Card</h2>
+            <h2 class="text-lg font-semibold mb-4 text-indigo-600 flex items-center gap-2">
+                <span>💳</span>
+                <span data-i18n="sec1_title">1. Membership Plans & Digital Card</span>
+            </h2>
             
             <!-- Comparison Table -->
             <div class="overflow-x-auto mb-6">
                 <table class="w-full text-left border-collapse text-sm">
                     <thead>
                         <tr class="bg-indigo-50 text-indigo-900">
-                            <th class="p-3 border-b">Plan Name</th>
-                            <th class="p-3 border-b">Duration & Price</th>
-                            <th class="p-3 border-b">Key Benefits</th>
-                            <th class="p-3 border-b text-center">Action</th>
+                            <th class="p-3 border-b" data-i18n="th_plan">Plan Name</th>
+                            <th class="p-3 border-b" data-i18n="th_duration">Duration & Price</th>
+                            <th class="p-3 border-b" data-i18n="th_benefits">Key Benefits</th>
+                            <th class="p-3 border-b text-center" data-i18n="th_action">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="border-b hover:bg-slate-50">
-                            <td class="p-3 font-bold text-slate-700">Monthly Pass</td>
-                            <td class="p-3 text-emerald-600 font-semibold">30 Days / $99</td>
-                            <td class="p-3 text-slate-500">Access all group classes, standard check-in ID.</td>
+                            <td class="p-3 font-bold text-slate-700" data-i18n="plan_monthly_name">Monthly Pass</td>
+                            <td class="p-3 text-emerald-600 font-semibold" data-i18n="plan_monthly_price">30 Days / $99</td>
+                            <td class="p-3 text-slate-500" data-i18n="plan_monthly_desc">Access all group classes, standard check-in ID.</td>
                             <td class="p-3 text-center">
-                                <button onclick="buyMembership('Monthly Pass', 99)" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-emerald-500 transition">Buy via Apple/GPay</button>
+                                <button onclick="buyMembership('Monthly Pass', 99)" data-i18n="btn_buy" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-emerald-500 transition">Buy via Apple/GPay</button>
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="p-3 font-bold text-slate-700">Annual VIP Pass</td>
-                            <td class="p-3 text-emerald-600 font-semibold">365 Days / $899</td>
-                            <td class="p-3 text-slate-500">Unlimited access, free personal trainer sessions, VIP lounge.</td>
+                            <td class="p-3 font-bold text-slate-700" data-i18n="plan_annual_name">Annual VIP Pass</td>
+                            <td class="p-3 text-emerald-600 font-semibold" data-i18n="plan_annual_price">365 Days / $899</td>
+                            <td class="p-3 text-slate-500" data-i18n="plan_annual_desc">Unlimited access, free personal trainer sessions, VIP lounge.</td>
                             <td class="p-3 text-center">
-                                <button onclick="buyMembership('Annual VIP Pass', 899)" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-emerald-500 transition">Buy via Apple/GPay</button>
+                                <button onclick="buyMembership('Annual VIP Pass', 899)" data-i18n="btn_buy" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs hover:bg-emerald-500 transition">Buy via Apple/GPay</button>
                             </td>
                         </tr>
                     </tbody>
@@ -93,50 +110,59 @@
             <div id="member-card-box" class="bg-gradient-to-r from-indigo-900 to-indigo-700 text-white p-6 rounded-xl shadow-md hidden flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
                     <div class="flex items-center gap-2 mb-1">
-                        <span class="bg-emerald-500 text-xs px-2 py-0.5 rounded font-bold">ACTIVE MEMBER</span>
+                        <span class="bg-emerald-500 text-xs px-2 py-0.5 rounded font-bold" data-i18n="badge_active">ACTIVE MEMBER</span>
                         <span class="text-indigo-200 text-xs" id="card-type-label">Monthly Pass</span>
                     </div>
                     <p class="text-2xl font-mono font-bold tracking-widest mt-2" id="display-member-id">MEM-XXXXXX</p>
                     <p class="text-xs text-indigo-200 mt-1" id="display-expiry">Expires: --</p>
-                    <p class="text-xs text-indigo-300 mt-3">💡 Front-Desk Check-in: Scan this unique QR code.</p>
+                    <p class="text-xs text-indigo-300 mt-3" data-i18n="qr_hint">💡 Front-Desk Check-in: Scan this unique QR code.</p>
                 </div>
                 <div class="bg-white p-3 rounded-lg text-slate-800 text-center shadow flex flex-col items-center">
                     <div id="qrcode" class="mb-2"></div>
-                    <button onclick="simulateCheckIn()" class="w-full bg-indigo-600 text-white text-xs py-1 px-3 rounded hover:bg-indigo-500 transition">Simulate Scan</button>
+                    <button onclick="simulateCheckIn()" data-i18n="btn_simulate_scan" class="w-full bg-indigo-600 text-white text-xs py-1 px-3 rounded hover:bg-indigo-500 transition">Simulate Scan</button>
                 </div>
             </div>
         </section>
 
         <!-- Announcements / Message Inbox Module -->
         <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h2 class="text-lg font-semibold mb-3 text-indigo-600 flex items-center gap-2">📢 2. Gym Announcements & Inbox</h2>
+            <h2 class="text-lg font-semibold mb-3 text-indigo-600 flex items-center gap-2">
+                <span>📢</span>
+                <span data-i18n="sec2_title">2. Gym Announcements & Inbox</span>
+            </h2>
             <div id="announcements-list" class="space-y-2 text-sm text-slate-600">
                 <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p class="font-bold text-amber-800">Welcome to FitHub Opening Season!</p>
-                    <p class="text-xs text-amber-700 mt-0.5">All new members get complimentary towel service and a free body composition analysis. Check out our class directory below!</p>
+                    <p class="font-bold text-amber-800" data-i18n="default_ann_title">Welcome to FitHub Opening Season!</p>
+                    <p class="text-xs text-amber-700 mt-0.5" data-i18n="default_ann_body">All new members get complimentary towel service and a free body composition analysis. Check out our class directory below!</p>
                 </div>
             </div>
         </section>
 
         <!-- Fitness Classes & Booking Module -->
         <section id="classes-section" class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h2 class="text-lg font-semibold mb-4 text-indigo-600 flex items-center gap-2">💪 3. Fitness Classes & Personal Training</h2>
+            <h2 class="text-lg font-semibold mb-4 text-indigo-600 flex items-center gap-2">
+                <span>💪</span>
+                <span data-i18n="sec3_title">3. Fitness Classes & Personal Training</span>
+            </h2>
             <div id="classes-list" class="space-y-3 mb-6">
-                <p class="text-sm text-slate-400">Loading available classes...</p>
+                <p class="text-sm text-slate-400" data-i18n="loading_classes">Loading available classes...</p>
             </div>
         </section>
 
         <!-- Training Records & Analytics Module -->
         <section class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-            <h2 class="text-lg font-semibold mb-3 text-indigo-600 flex items-center gap-2">📊 4. Training Records & Expert Advice</h2>
+            <h2 class="text-lg font-semibold mb-3 text-indigo-600 flex items-center gap-2">
+                <span>📊</span>
+                <span data-i18n="sec4_title">4. Training Records & Expert Advice</span>
+            </h2>
             
             <div id="training-advice" class="bg-indigo-50 border border-indigo-100 p-4 rounded-lg text-sm text-indigo-900 mb-4">
-                💡 <span class="font-semibold">AI Coach Insight:</span> Book your first session to receive personalized workout analytics and recovery recommendations!
+                💡 <span class="font-semibold" data-i18n="ai_coach_label">AI Coach Insight:</span> <span data-i18n="ai_coach_default">Book your first session to receive personalized workout analytics and recovery recommendations!</span>
             </div>
 
-            <h3 class="font-semibold text-slate-700 mb-2 text-sm">My Booked Sessions & History</h3>
+            <h3 class="font-semibold text-slate-700 mb-2 text-sm" data-i18n="bookings_subtitle">My Booked Sessions & History</h3>
             <div id="bookings-list" class="space-y-2">
-                <p class="text-sm text-slate-400">No training bookings found.</p>
+                <p class="text-sm text-slate-400" data-i18n="no_bookings">No training bookings found.</p>
             </div>
         </section>
 
@@ -146,17 +172,17 @@
     <div id="signin-modal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
             <button onclick="closeModal('signin-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">✕</button>
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Sign In to FitHub</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-4" data-i18n="modal_signin_title">Sign In to FitHub</h3>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                    <input type="email" id="signin-email" placeholder="yourname@example.com" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_email">Email</label>
+                    <input type="email" id="signin-email" data-i18n-placeholder="ph_email" placeholder="yourname@example.com" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_password">Password</label>
                     <input type="password" id="signin-password" placeholder="••••••••" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
-                <button onclick="handleSignIn()" class="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition mt-2">Sign In</button>
+                <button onclick="handleSignIn()" data-i18n="btn_signin" class="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition mt-2">Sign In</button>
             </div>
         </div>
     </div>
@@ -165,31 +191,31 @@
     <div id="join-modal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
             <button onclick="closeModal('join-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">✕</button>
-            <h3 class="text-lg font-bold text-slate-800 mb-4">Join Us - Create Account</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-4" data-i18n="modal_join_title">Join Us - Create Account</h3>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Alias / Username</label>
-                    <input type="text" id="join-alias" placeholder="e.g. Alex" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_alias">Alias / Username</label>
+                    <input type="text" id="join-alias" data-i18n-placeholder="ph_alias" placeholder="e.g. Alex" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email</label>
-                    <input type="email" id="join-email" placeholder="yourname@example.com" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_email">Email</label>
+                    <input type="email" id="join-email" data-i18n-placeholder="ph_email" placeholder="yourname@example.com" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Birthdate</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_dob">Birthdate</label>
                         <input type="date" id="join-dob" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_phone">Phone Number</label>
                         <input type="tel" id="join-phone" placeholder="123-456-7890" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_password">Password</label>
                     <input type="password" id="join-password" placeholder="••••••••" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
-                <button onclick="handleSignUp()" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-500 transition mt-2">Create Account</button>
+                <button onclick="handleSignUp()" data-i18n="btn_create_account" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-500 transition mt-2">Create Account</button>
             </div>
         </div>
     </div>
@@ -198,92 +224,96 @@
     <div id="profile-modal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('profile-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">✕</button>
-            <h3 class="text-lg font-bold text-slate-800 mb-4">User Profile & Announcements</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-4" data-i18n="modal_profile_title">User Profile & Announcements</h3>
             
             <!-- View Mode -->
             <div id="profile-view-mode">
                 <div class="space-y-3 text-sm border-t border-b border-slate-100 py-3 mb-4">
                     <div class="flex justify-between py-1">
-                        <span class="text-slate-500">Alias:</span>
+                        <span class="text-slate-500" data-i18n="prof_alias">Alias:</span>
                         <span id="prof-alias" class="font-semibold text-slate-800">--</span>
                     </div>
                     <div class="flex justify-between py-1">
-                        <span class="text-slate-500">Email:</span>
+                        <span class="text-slate-500" data-i18n="prof_email">Email:</span>
                         <span id="prof-email" class="font-semibold text-slate-800">--</span>
                     </div>
                     <div class="flex justify-between py-1">
-                        <span class="text-slate-500">Birthdate:</span>
+                        <span class="text-slate-500" data-i18n="prof_dob">Birthdate:</span>
                         <span id="prof-dob" class="font-semibold text-slate-800">--</span>
                     </div>
                     <div class="flex justify-between py-1">
-                        <span class="text-slate-500">Phone Number:</span>
+                        <span class="text-slate-500" data-i18n="prof_phone">Phone Number:</span>
                         <span id="prof-phone" class="font-semibold text-slate-800">--</span>
                     </div>
                     <div class="flex justify-between py-1">
-                        <span class="text-slate-500">User ID:</span>
+                        <span class="text-slate-500" data-i18n="prof_uid">User ID:</span>
                         <span id="prof-uid" class="font-mono text-xs text-slate-400 truncate max-w-[200px]">--</span>
                     </div>
                 </div>
 
                 <!-- Profile Action Buttons -->
                 <div class="flex gap-2 mb-6">
-                    <button onclick="toggleEditMode(true)" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition">Edit Profile</button>
-                    <button onclick="handleSignOut()" class="bg-rose-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition">Sign Out</button>
+                    <button onclick="toggleEditMode(true)" data-i18n="btn_edit_profile" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition">Edit Profile</button>
+                    <button onclick="handleSignOut()" data-i18n="menu_signout" class="bg-rose-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition">Sign Out</button>
                 </div>
             </div>
 
             <!-- Edit Mode -->
             <div id="profile-edit-mode" class="hidden space-y-3 mb-6">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Alias / Username</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_alias">Alias / Username</label>
                     <input type="text" id="edit-alias" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Birthdate</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_dob">Birthdate</label>
                     <input type="date" id="edit-dob" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Phone Number</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_phone">Phone Number</label>
                     <input type="tel" id="edit-phone" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div class="flex gap-2 pt-2">
-                    <button onclick="saveProfile()" class="flex-1 bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-500 transition">Save Changes</button>
-                    <button onclick="toggleEditMode(false)" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-300 transition">Cancel</button>
+                    <button onclick="saveProfile()" data-i18n="btn_save_changes" class="flex-1 bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-500 transition">Save Changes</button>
+                    <button onclick="toggleEditMode(false)" data-i18n="btn_cancel" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-300 transition">Cancel</button>
                 </div>
             </div>
 
             <!-- Announcements Hub Inside Profile Modal -->
             <div class="border-t border-slate-100 pt-4 mt-4">
-                <h4 class="font-bold text-sm text-indigo-700 mb-3 flex items-center gap-2">📢 Announcements Hub</h4>
+                <h4 class="font-bold text-sm text-indigo-700 mb-3 flex items-center gap-2">
+                    <span>📢</span>
+                    <span data-i18n="ann_hub_title">Announcements Hub</span>
+                </h4>
                 
                 <!-- Admin Only: Add New Announcement Form -->
                 <div id="admin-announcement-box" class="p-3 bg-slate-50 border border-slate-200 rounded-lg mb-4 hidden">
-                    <p class="font-bold text-slate-700 text-xs mb-2">⚙️ Admin: Publish New Announcement</p>
+                    <p class="font-bold text-slate-700 text-xs mb-2" data-i18n="admin_ann_heading">⚙️ Admin: Publish New Announcement</p>
                     <input type="hidden" id="edit-announcement-id">
                     <div class="space-y-2">
-                        <input type="text" id="announcement-title" placeholder="Announcement Title" class="border border-slate-300 px-3 py-1.5 rounded-lg w-full text-xs focus:outline-none focus:border-indigo-500">
-                        <textarea id="announcement-content" placeholder="Announcement content details..." rows="2" class="border border-slate-300 px-3 py-1.5 rounded-lg w-full text-xs focus:outline-none focus:border-indigo-500"></textarea>
+                        <input type="text" id="announcement-title" data-i18n-placeholder="ph_ann_title" placeholder="Announcement Title" class="border border-slate-300 px-3 py-1.5 rounded-lg w-full text-xs focus:outline-none focus:border-indigo-500">
+                        <textarea id="announcement-content" data-i18n-placeholder="ph_ann_content" placeholder="Announcement content details..." rows="2" class="border border-slate-300 px-3 py-1.5 rounded-lg w-full text-xs focus:outline-none focus:border-indigo-500"></textarea>
                         <div class="flex gap-2">
-                            <button id="announcement-submit-btn" onclick="saveAnnouncement()" class="flex-1 bg-indigo-600 text-white py-1.5 rounded-lg text-xs hover:bg-indigo-500 transition">Publish Announcement</button>
-                            <button id="announcement-cancel-btn" onclick="resetAnnouncementForm()" class="bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs hidden">Cancel Edit</button>
+                            <button id="announcement-submit-btn" onclick="saveAnnouncement()" data-i18n="btn_publish_ann" class="flex-1 bg-indigo-600 text-white py-1.5 rounded-lg text-xs hover:bg-indigo-500 transition">Publish Announcement</button>
+                            <button id="announcement-cancel-btn" onclick="resetAnnouncementForm()" data-i18n="btn_cancel_edit" class="bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs hidden">Cancel Edit</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Announcements Management / Read List inside Profile Modal -->
                 <div id="profile-announcements-list" class="space-y-2 max-h-48 overflow-y-auto text-xs text-slate-600">
-                    <p class="text-slate-400">Loading announcements...</p>
+                    <p class="text-slate-400" data-i18n="loading_ann">Loading announcements...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t py-4 text-center text-xs text-slate-400">
+    <footer class="bg-white border-t py-4 text-center text-xs text-slate-400" data-i18n="footer_text">
         FitHub Smart Fitness Club Management System &copy; 2026 | Designed for midterm Presentation
     </footer>
 
     <!-- Modular Scripts (Order Matters) -->
+    <script src="js/i18n.js"></script>
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/announcements.js"></script>
