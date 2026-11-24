@@ -20,21 +20,27 @@ async function checkUser() {
         guardPageByAuth(Boolean(user));
     }
 
-    if (user) {
-        const alias = user.user_metadata?.alias || user.email.split('@')[0];
-        setElementText('nav-username', `Hi, ${alias}`);
-
-        setElementHidden('unauth-buttons', true);
-        setElementHidden('auth-dropdown-container', false);
-
-        if (typeof loadMembership === 'function') loadMembership();
-        if (typeof loadClasses === 'function') loadClasses();
-        if (typeof loadBookings === 'function') loadBookings();
-    } else {
+    if (!user) {
         setElementHidden('unauth-buttons', false);
         setElementHidden('auth-dropdown-container', true);
         setElementHidden('member-card-box', true);
+        if (typeof loadAnnouncements === 'function') {
+            loadAnnouncements();
+        }
+        return;
     }
+
+    setElementHidden('portal-body', false);
+
+    const alias = user.user_metadata?.alias || user.email.split('@')[0];
+    setElementText('nav-username', `Hi, ${alias}`);
+
+    setElementHidden('unauth-buttons', true);
+    setElementHidden('auth-dropdown-container', false);
+
+    if (typeof loadMembership === 'function') loadMembership();
+    if (typeof loadClasses === 'function') loadClasses();
+    if (typeof loadBookings === 'function') loadBookings();
 
     if (typeof loadAnnouncements === 'function') {
         loadAnnouncements();
