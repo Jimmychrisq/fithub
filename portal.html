@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page_title">FitHub - Member Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/custom.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        .collapse-panel {
+            display: grid;
+            grid-template-rows: 0fr;
+            opacity: 0;
+            transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+        }
+        .collapse-panel.is-open {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+        .collapse-inner {
+            overflow: hidden;
+        }
+        .plan-card {
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .plan-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 28px -10px rgba(79, 70, 229, 0.22);
+        }
+    </style>
+</head>
+<body id="portal-body" class="min-h-screen text-slate-800 flex flex-col justify-between hidden">
+
+    <header class="sticky top-0 z-30 bg-slate-950/80 backdrop-blur-md border-b border-white/10 text-white">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="portal.html" class="text-xl font-bold tracking-wider flex items-center gap-2">
+                <span>🏋️</span>
+                <span data-i18n="brand_name">FitHub Smart System</span>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <button id="lang-toggle-btn" onclick="toggleLanguage()" class="bg-white/10 hover:bg-white/20 text-white text-xs px-2.5 py-1.5 rounded-lg font-medium transition border border-white/15 flex items-center gap-1">
+                    <span>🌐</span>
+                    <span id="lang-label">中文</span>
+                </button>
+
+                <div id="auth-dropdown-container" class="relative">
+                    <button onclick="toggleUserDropdown()" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs px-3.5 py-2 rounded-lg font-medium transition flex items-center gap-2 shadow-sm border border-indigo-500">
+                        <span id="nav-username">Hi, Member</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border border-slate-100 py-1 text-slate-700 text-xs z-30">
+                        <button onclick="openProfileModal()" class="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-center gap-2">
+                            <span>👤</span>
+                            <span data-i18n="menu_profile">View Profile & Announcements</span>
+                        </button>
+                        <hr class="my-1 border-slate-100">
+                        <button onclick="handleSignOut()" class="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 flex items-center gap-2">
+                            <span>🚪</span>
+                            <span data-i18n="menu_signout">Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+        <!-- 1. Membership Plans & Digital Card -->
+        <section id="membership-section" class="fithub-card p-6 rounded-2xl shadow-sm border border-slate-100">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <h2 class="text-lg font-semibold text-indigo-600 flex items-center gap-2">
+                    <span>💳</span>
+                    <span data-i18n="sec1_title">1. Membership Plans & Digital Card</span>
+                </h2>
+
+                <button id="toggle-membership-options-btn" onclick="toggleMembershipOptions()" aria-expanded="false" class="bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-sm transition flex items-center gap-2">
+                    <span>✨</span>
+                    <span data-i18n="btn_membership_options">Membership Options</span>
+                    <svg id="membership-options-chevron" class="w-3.5 h-3.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Animated Collapsible Membership Options Cards -->
+            <div id="membership-options-panel" class="collapse-panel mb-5">
+                <div class="collapse-inner">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 pb-2">
+                        <!-- Monthly Pass Card -->
+                        <div class="plan-card bg-white/90 border border-indigo-100 hover:border-indigo-300 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700" data-i18n="plan_monthly_name">Monthly Pass</span>
+                                    <span class="text-lg font-extrabold text-emerald-600" data-i18n="plan_monthly_price">30 Days / $99</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-4" data-i18n="plan_monthly_desc">Access all group classes, standard check-in ID.</p>
+                            </div>
+                            <button onclick="buyMembership('Monthly Pass', 99)" data-i18n="btn_buy" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white py-2.5 rounded-xl text-xs font-semibold transition shadow-sm">
+                                Buy via Apple/GPay
+                            </button>
+                        </div>
+
+                        <!-- Annual VIP Pass Card -->
+                        <div class="plan-card bg-gradient-to-br from-indigo-50/90 to-white border border-indigo-200 hover:border-indigo-400 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-100 text-amber-800" data-i18n="plan_annual_name">Annual VIP Pass</span>
+                                    <span class="text-lg font-extrabold text-emerald-600" data-i18n="plan_annual_price">365 Days / $899</span>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed mb-4" data-i18n="plan_annual_desc">Unlimited access, free personal trainer sessions, VIP lounge.</p>
+                            </div>
+                            <button onclick="buyMembership('Annual VIP Pass', 899)" data-i18n="btn_buy" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white py-2.5 rounded-xl text-xs font-semibold transition shadow-sm">
+                                Buy via Apple/GPay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Member Card (Only Tier, ID & Expiry on load) -->
+            <div id="member-card-box" class="relative overflow-hidden card-shimmer bg-gradient-to-r from-indigo-900 to-indigo-700 text-white p-6 rounded-xl shadow-md hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="bg-emerald-500 text-xs px-2 py-0.5 rounded font-bold" data-i18n="badge_active">ACTIVE MEMBER</span>
+                        <span class="text-indigo-200 text-xs font-medium" id="card-type-label">Monthly Pass</span>
+                    </div>
+                    <p class="text-2xl font-mono font-bold tracking-widest mt-2" id="display-member-id">MEM-XXXXXX</p>
+                    <p class="text-xs text-indigo-200 mt-1" id="display-expiry">Expires: --</p>
+                </div>
+
+                <button onclick="openQrCodeModal()" class="bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-4 py-2.5 rounded-lg border border-white/25 transition flex items-center gap-2 shrink-0">
+                    <span>📱</span>
+                    <span data-i18n="btn_show_qr">Show My QR Code</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. Gym Announcements & Inbox -->
+        <section class="fithub-card p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h2 class="text-lg font-semibold mb-3 text-indigo-600 flex items-center gap-2">
+                <span>📢</span>
+                <span data-i18n="sec2_title">2. Gym Announcements & Inbox</span>
+            </h2>
+            <div id="announcements-list" class="space-y-2 text-sm text-slate-600">
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p class="font-bold text-amber-800" data-i18n="default_ann_title">Welcome to FitHub Opening Season!</p>
+                    <p class="text-xs text-amber-700 mt-0.5" data-i18n="default_ann_body">All new members get complimentary towel service and a free body composition analysis. Check out our class directory below!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Fitness Classes & Personal Training -->
+        <section id="classes-section" class="fithub-card p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h2 class="text-lg font-semibold mb-4 text-indigo-600 flex items-center gap-2">
+                <span>💪</span>
+                <span data-i18n="sec3_title">3. Fitness Classes & Personal Training</span>
+            </h2>
+            <div id="classes-list" class="space-y-3 mb-6">
+                <p class="text-sm text-slate-400" data-i18n="loading_classes">Loading available classes...</p>
+            </div>
+
+            <!-- Coach / Admin Class Management Panel (hidden by default) -->
+            <div id="coach-class-manager" class="hidden mt-5 pt-5 border-t border-slate-200">
+                <h3 class="text-sm font-bold text-slate-800 mb-3" data-i18n="coach_panel_title">Coach Class Manager</h3>
+                <form id="class-editor-form" onsubmit="saveClassForm(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <input id="class-title" type="text" placeholder="Class Title (e.g. Evening HIIT)" class="border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                    <input id="class-coach" type="text" placeholder="Coach Name (e.g. Coach Alex)" class="border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                    <input id="class-schedule" type="text" placeholder="Schedule (e.g. Mon / Wed · 18:30)" class="border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input id="class-capacity" type="number" min="1" value="20" placeholder="Capacity" class="border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                        <input id="class-enrolled" type="number" min="0" value="0" placeholder="Enrolled" class="border border-slate-300 rounded-lg px-3 py-2 bg-white">
+                    </div>
+                    <div class="sm:col-span-2 flex gap-2">
+                        <button id="class-submit-btn" type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg transition">Add Class</button>
+                        <button type="button" onclick="resetClassForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-4 py-2 rounded-lg transition">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 4. Training Records & Expert Advice -->
+        <section class="fithub-card p-6 rounded-2xl shadow-sm border border-slate-100">
+            <h2 class="text-lg font-semibold mb-3 text-indigo-600 flex items-center gap-2">
+                <span>📊</span>
+                <span data-i18n="sec4_title">4. Training Records & Expert Advice</span>
+            </h2>
+
+            <div id="training-advice" class="bg-indigo-50 border border-indigo-100 p-4 rounded-lg text-sm text-indigo-900 mb-4">
+                💡 <span class="font-semibold" data-i18n="ai_coach_label">AI Coach Insight:</span> <span data-i18n="ai_coach_default">Book your first session to receive personalized workout analytics and recovery recommendations!</span>
+            </div>
+
+            <h3 class="font-semibold text-slate-700 mb-2 text-sm" data-i18n="bookings_subtitle">My Booked Sessions & History</h3>
+            <div id="bookings-list" class="space-y-2">
+                <p class="text-sm text-slate-400" data-i18n="no_bookings">No training bookings found.</p>
+            </div>
+        </section>
+        
+        <!-- 5. AI Fitness Coach -->
+        <div id="ai-chat-messages" class="h-60 overflow-y-auto space-y-2.5 p-3.5 bg-slate-50 rounded-xl text-xs border border-slate-200/80 mb-3">
+                <div data-i18n="ai_welcome" class="bg-indigo-50 text-indigo-900 p-3 rounded-lg leading-relaxed">
+                    Hi! Tell me your fitness goal (fat loss, muscle gain, stamina, or mobility), days per week, or ask for a warm-up and recovery routine.
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <input
+                    id="ai-chat-input"
+                    type="text"
+                    data-i18n-placeholder="ph_ai_input"
+                    placeholder="Ask FitHub AI Coach for a workout split, warm-up, or recovery advice..."
+                    onkeydown="if (event.key === 'Enter') sendCoachMessage()"
+                    class="flex-1 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-indigo-500 bg-white"
+                >
+                <button
+                    id="ai-chat-send-btn"
+                    data-i18n="btn_send"
+                    onclick="sendCoachMessage()"
+                    class="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition shrink-0"
+                >
+                    Send
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- QR Code Modal (Independent top-level modal) -->
+    <div id="qrcode-modal" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 relative text-center text-slate-800">
+            <button onclick="closeQrCodeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">✕</button>
+            <h3 class="text-lg font-bold text-slate-800 mb-1" data-i18n="modal_qr_title">Member Check-in QR Code</h3>
+            <p class="text-xs text-slate-500 mb-4" id="qr-modal-member-id">MEM-XXXXXX</p>
+
+            <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl inline-flex flex-col items-center justify-center mb-4">
+                <div id="qrcode"></div>
+            </div>
+
+            <p class="text-xs text-slate-500 mb-4" data-i18n="qr_hint">💡 Front-Desk Check-in: Scan this unique QR code.</p>
+
+            <button onclick="simulateCheckIn()" data-i18n="btn_simulate_scan" class="w-full bg-indigo-600 text-white text-xs font-medium py-2.5 px-4 rounded-lg hover:bg-indigo-500 transition">
+                Simulate Scan
+            </button>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('profile-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">✕</button>
+            <h3 class="text-lg font-bold text-slate-800 mb-4" data-i18n="modal_profile_title">User Profile & Announcements</h3>
+
+            <!-- View Mode -->
+            <div id="profile-view-mode">
+                <div class="space-y-3 text-sm border-t border-b border-slate-100 py-3 mb-4">
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500" data-i18n="prof_alias">Alias:</span>
+                        <span id="prof-alias" class="font-semibold text-slate-800">--</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500" data-i18n="prof_email">Email:</span>
+                        <span id="prof-email" class="font-semibold text-slate-800">--</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500" data-i18n="prof_dob">Birthdate:</span>
+                        <span id="prof-dob" class="font-semibold text-slate-800">--</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500" data-i18n="prof_phone">Phone Number:</span>
+                        <span id="prof-phone" class="font-semibold text-slate-800">--</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500" data-i18n="prof_uid">User ID:</span>
+                        <span id="prof-uid" class="font-mono text-xs text-slate-400 truncate max-w-[200px]">--</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mb-6">
+                    <button onclick="toggleEditMode(true)" data-i18n="btn_edit_profile" class="flex-1 bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-500 transition">Edit Profile</button>
+                    <button onclick="handleSignOut()" data-i18n="menu_signout" class="bg-rose-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-600 transition">Sign Out</button>
+                </div>
+            </div>
+
+            <!-- Edit Mode -->
+            <div id="profile-edit-mode" class="hidden space-y-3 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_alias">Alias / Username</label>
+                    <input type="text" id="edit-alias" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_dob">Birthdate</label>
+                    <input type="date" id="edit-dob" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" data-i18n="label_phone">Phone Number</label>
+                    <input type="tel" id="edit-phone" class="border border-slate-300 px-3 py-2 rounded-lg w-full text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="saveProfile()" data-i18n="btn_save_changes" class="flex-1 bg-emerald-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-emerald-500 transition">Save Changes</button>
+                    <button onclick="toggleEditMode(false)" data-i18n="btn_cancel" class="bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-300 transition">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Announcements Hub Inside Profile Modal -->
+            <div class="border-t border-slate-100 pt-4 mt-4">
+                <h4 class="font-bold text-sm text-indigo-700 mb-3 flex items-center gap-2">
+                    <span>📢</span>
+                    <span data-i18n="ann_hub_title">Announcements Hub</span>
+                </h4>
+
+                <div id="admin-announcement-box" class="p-3 bg-slate-50 border border-slate-200 rounded-lg mb-4 hidden">
+                    <p class="font-bold text-slate-700 text-xs mb-2" data-i18n="admin_ann_heading">⚙️ Admin: Publish New Announcement</p>
+                    <input type="hidden" id="edit-announcement-id">
+                    <div class="space-y-2">
+                        <input type="text" id="announcement-title" data-i18n-placeholder="ph_ann_title" placeholder="Announcement Title" class="border border-slate-300 px-3 py-1.5 rounded-lg w-full text-xs focus:outline-none focus:border-indigo-500">
+                        <textarea id="announcement-content" data-i18n-placeholder="ph_ann_content" placeholder="Announcement content details..." rows="2" class="border border-slate-300 px-3 py-1.5 rounded-lg w-full text-xs focus:outline-none focus:border-indigo-500"></textarea>
+                        <div class="flex gap-2">
+                            <button id="announcement-submit-btn" onclick="saveAnnouncement()" data-i18n="btn_publish_ann" class="flex-1 bg-indigo-600 text-white py-1.5 rounded-lg text-xs hover:bg-indigo-500 transition">Publish Announcement</button>
+                            <button id="announcement-cancel-btn" onclick="resetAnnouncementForm()" data-i18n="btn_cancel_edit" class="bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs hidden">Cancel Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="profile-announcements-list" class="space-y-2 max-h-48 overflow-y-auto text-xs text-slate-600">
+                    <p class="text-slate-400" data-i18n="loading_ann">Loading announcements...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-950/70 border-t border-white/10 py-4 text-center text-xs text-slate-400" data-i18n="footer_text">
+        FitHub Smart Fitness Club Management System &copy; 2026 | Designed for midterm Presentation
+    </footer>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/announcements.js"></script>
+    <script src="js/membership.js"></script>
+    <script src="js/classes.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/coach-chat.js"></script>
+</body>
+</html>
