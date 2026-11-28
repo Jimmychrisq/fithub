@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FitHub Simple Test</title>
+    <style>
+        body { font-family: system-ui, sans-serif; padding: 20px; background: #f8fafc; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        li { margin: 8px 0; padding: 8px; border-radius: 4px; }
+        li.pass-item { background: #f0fdf4; }
+        li.fail-item { background: #fef2f2; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>🧪 FitHub Simple Test Report</h2>
+        <p>Passed: <span id="pass" class="pass">0</span> | Failed: <span id="fail" class="fail">0</span></p>
+        <ul id="results"></ul>
+    </div>
+
+    <script>
+        let passCount = 0;
+        let failCount = 0;
+
+        // Simple assertion helper
+        function test(name, fn) {
+            try {
+                fn();
+                passCount++;
+                document.getElementById('results').innerHTML +=
+                    `<li class="pass-item">✅ ${name}</li>`;
+            } catch (err) {
+                failCount++;
+                document.getElementById('results').innerHTML +=
+                    `<li class="fail-item">❌ ${name} — ${err.message}</li>`;
+            }
+            document.getElementById('pass').textContent = passCount;
+            document.getElementById('fail').textContent = failCount;
+        }
+
+        function expect(actual) {
+            return {
+                toBe: (expected) => {
+                    if (actual !== expected) {
+                        throw new Error(`Expected ${expected}, got ${actual}`);
+                    }
+                },
+                toBeTruthy: () => {
+                    if (!actual) throw new Error(`Expected truthy, got ${actual}`);
+                },
+                toBeFalsy: () => {
+                    if (actual) throw new Error(`Expected falsy, got ${actual}`);
+                }
+            };
+        }
+
+        // ==================== Tests Start ====================
+
+        // Mock helper functions
+        function canManageClasses(role) {
+            return role === 'coach' || role === 'admin';
+        }
+
+        function canBookClass(myBookings, cls) {
+            return !myBookings.some(b => b.class_id === cls.id);
+        }
+
+        // Test 1: Members cannot manage classes
+        test('Member cannot manage classes', () => {
+            expect(canManageClasses('member')).toBeFalsy();
+        });
+
+        // Test 2: Coaches can manage classes
+        test('Coach can manage classes', () => {
+            expect(canManageClasses('coach')).toBeTruthy();
+        });
+
+        // Test 3: Admins can manage classes
+        test('Admin can manage classes', () => {
+            expect(canManageClasses('admin')).toBeTruthy();
+        });
+
+        // Test 4: Already booked classes cannot be booked again
+        test('Cannot book an already booked class', () => {
+            const cls = { id: 'class-1' };
+            const bookings = [{ class_id: 'class-1' }];
+            expect(canBookClass(bookings, cls)).toBeFalsy();
+        });
+
+        // Test 5: Unbooked classes can be booked
+        test('Can book an unbooked class', () => {
+            const cls = { id: 'class-2' };
+            expect(canBookClass([], cls)).toBeTruthy();
+        });
+
+        // Test 6: Terms checkbox disables submit button when unchecked
+        test('Sign-up button is disabled when terms are unchecked', () => {
+            // Create mock elements
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = 'join-agree-terms';
+            checkbox.checked = false;
+            document.body.appendChild(checkbox);
+
+            const btn = document.createElement('button');
+            btn.id = 'join-submit-btn';
+            btn.disabled = true;
+            document.body.appendChild(btn);
+
+            // Simulate toggleSignUpButton
+            function toggleSignUpButton() {
+                const agreed = document.getElementById('join-agree-terms')?.checked;
+                const btn = document.getElementById('join-submit-btn');
+                if (btn) btn.disabled = !agreed;
+            }
+
+            toggleSignUpButton();
+            expect(btn.disabled).toBe(true);
+        });
+
+        // Test 7: Terms checkbox enables submit button when checked
+        test('Sign-up button is enabled when terms are checked', () => {
+            const checkbox = document.getElementById('join-agree-terms');
+            const btn = document.getElementById('join-submit-btn');
+            if (checkbox) checkbox.checked = true;
+
+            function toggleSignUpButton() {
+                const agreed = document.getElementById('join-agree-terms')?.checked;
+                const btn = document.getElementById('join-submit-btn');
+                if (btn) btn.disabled = !agreed;
+            }
+
+            toggleSignUpButton();
+            expect(btn.disabled).toBe(false);
+        });
+
+        // Test 8: Membership renewal logic
+        test('Active membership renewal should extend from current expiration date', () => {
+            const current = new Date('2026-02-01');
+            const now = new Date('2026-01-01');
+
+            function calcExpiry(currentExpiry, isAnnual) {
+                const baseDate = currentExpiry && new Date(currentExpiry) > now
+                    ? new Date(currentExpiry) : now;
+                const expires = new Date(baseDate);
+                if (isAnnual) expires.setFullYear(expires.getFullYear() + 1);
+                else expires.setMonth(expires.getMonth() + 1);
+                return expires;
+            }
+
+            const result = calcExpiry(current, false);
+            expect(result.getMonth()).toBe(2); // March (0-indexed month 2)
+        });
+
+    </script>
+</body>
+</html>
